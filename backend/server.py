@@ -38,7 +38,6 @@ def graph_index():
 
     all_edges = store.find(Edge)
 
-
     for edge in all_edges:
         export["edges"].append({
             "id": "edge-%d" % edge.id,
