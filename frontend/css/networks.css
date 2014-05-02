@@ -1,0 +1,17 @@
+#graphView {
+    position: absolute;
+    left:0; top: 0; bottom: 0; right: 0;
+
+    background: #ccc;
+}
+
+#propertyView {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    bottom: 20px;
+    width: 15%;
+
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #666;
+}
