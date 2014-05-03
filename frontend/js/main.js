@@ -25,6 +25,40 @@ var EdgeCollection = Backbone.Collection.extend({
     }
 });
 
+var PropertiesView = Backbone.View.extend({
+    active: null,
+
+    initialize: function() {
+        this.model.on('change:properties', _.bind(this.render, this));
+    },
+    
+    show: function(which) {
+        this.active =  which;
+        this.render();
+    },
+
+    render: function() {
+        console.log('propsview render');
+        
+        var node = this.model.get({cid: this.active});
+        
+        var $list = this.$('ul');
+        
+        $list.empty();
+        
+        for (var attr in node.get('properties')) {
+            $("<li>"+attr+": "+node.get('properties')[attr]+"</li>").appendTo($list);
+        }
+    },
+    
+    getActiveNode: function() {
+        if (this.active !== null) 
+            return this.model.get({cid: this.active});
+        
+        return null;
+    }
+});
+
 var GraphView = Backbone.View.extend({
     sigmaGraph: null,
     
@@ -38,6 +72,7 @@ var GraphView = Backbone.View.extend({
         console.error('Unimplemented!');
     },
     models: [],
+    propsView: null,
     initialize: function(attr) {
         var container = this.$el.attr('id');
 
@@ -50,8 +85,11 @@ var GraphView = Backbone.View.extend({
             this.models[model] = attr.models[model];
         }
 
+        this.propsView = attr.propsView;
+
         this.sigmaGraph = new sigma({graph: data, container: container});
-                
+        this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
+        
         /*
          drawingProperties({
          defaultLabelColor: '#222',
@@ -86,7 +124,8 @@ var GraphView = Backbone.View.extend({
             flatnode.y = Math.random();
             flatnode.size = 1;
             flatnode.label = flatnode.identifier;
-            
+            flatnode.cid = node.cid;
+
             console.log(flatnode);
 
             graph.graph.addNode(flatnode);
@@ -106,4 +145,5 @@ var GraphView = Backbone.View.extend({
 
 var nodes = new NodeCollection();
 var edges = new EdgeCollection();
-var view = new GraphView({el: "#graphView", models: {nodes: nodes, edges: edges}});
+var propsView = new PropertiesView({el: "#propertyView", model: nodes});
+var view = new GraphView({el: "#graphView", models: {nodes: nodes, edges: edges}, propsView: propsView});
