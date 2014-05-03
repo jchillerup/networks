@@ -11,14 +11,28 @@ mod = Blueprint("analysis", __name__, url_prefix="/analysis")
 
 @mod.route('/ndegrees/<string:identifier>/<int:degrees>', methods=["GET"])
 def read_nodes(identifier, degrees):
+
+    if degrees > 5:
+        raise Exception("I am sorry, this doesn't scale - at all")
     
-    node = db().find(Node, Node.identifier == identifier).one()
+    init_node = db().find(Node, Node.identifier == identifier).one()
 
-    for inbound in node.inbound:
-        print inbound
+    nodes = set((init_node,))
+    edges = set()
 
-    for outbound in node.outbound:
-        print outbound
-    
+    for i in range(degrees):
 
-    return ""
+        for node in list(nodes):
+
+            for inbound in node.inbound:
+                edges.add(inbound)
+                nodes.add(inbound.source)
+
+            for outbound in node.outbound:
+                edges.add(outbound)
+                nodes.add(outbound.target)
+
+    return json.dumps({
+        "edges": map(lambda edge: edge.serialize(), edges),
+        "nodes": map(lambda nodes: nodes.serialize(), nodes)
+        })
