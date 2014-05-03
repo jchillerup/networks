@@ -11,7 +11,7 @@ mod = Blueprint("graph", __name__, url_prefix="/graph")
 
 @mod.route('/nodes', methods=["GET"])
 @mod.route('/nodes/<string:identifier>', methods=["GET"])
-def get_nodes(identifier=None):
+def read_nodes(identifier=None):
 
     if identifier:
         node = db().find(Node, Node.identifier == identifier)
@@ -26,10 +26,17 @@ def get_nodes(identifier=None):
 @mod.route('/nodes', methods=["POST", "PUT"])
 def createupdate_node():
     req = request.get_json()
-    print "Got req", req
 
-    node = db().add(Node())
-    node.identifier = req[u"id"]
+    identifier = req[u"id"]
+
+    node = db().find(Node, Node.identifier == identifier).one()
+
+    if node is None:
+        node = db().add(Node())
+        node.identifier = identifier
+
+    props = db().find(NodeProperty, NodeProperty.node_id == Node.id, Node.identifier == identifier)
+    db().remove(props)
 
     for key, value in req[u"properties"].items():
         prop = NodeProperty()
@@ -69,7 +76,7 @@ def delete_node(identifier=None):
 
 @mod.route('/edges', methods=['GET'])
 @mod.route('/edges/<string:identifier>', methods=['GET'])
-def get_edges(identifier=None):
+def read_edges(identifier=None):
 
     if identifier:
         edge = db().find(Edge, Edge.identifier == identifier)
@@ -82,7 +89,7 @@ def get_edges(identifier=None):
 
 
 @mod.route('/edges', methods=["POST", "PUT"])
-def create_edge():
+def createupdate_edge():
     req = request.get_json()
     print "Got req", req
 
