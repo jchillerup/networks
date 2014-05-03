@@ -12,7 +12,7 @@ var GraphView = Backbone.View.extend({
         $.getJSON("/graph", function(data) {
 
             var s = new sigma({graph: data, container: container});
-            
+                        
             s.startForceAtlas2();
             
             setTimeout(function() {

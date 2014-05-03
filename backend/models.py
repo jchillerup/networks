@@ -22,6 +22,7 @@ class NodeProperty(Storm):
 class Edge(Storm):
     __storm_table__ = "edge"
     id = Int(primary=True)
+    origin = Unicode()
     confidence = Float()
     source_id = Int()
     target_id = Int()
@@ -30,7 +31,7 @@ class Edge(Storm):
     properties = ReferenceSet(id, "EdgeProperty.node_id")
 
     def __repr__(self):
-        return "%s -> %s" % (self.source.identifier, self.target.identifier)
+        return "%s (%s) %s" % (self.source.identifier, self.target.identifier)
 
 class EdgeProperty(Storm):
     __storm_table__ = "edgeprop"

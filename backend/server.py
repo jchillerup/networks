@@ -24,7 +24,7 @@ def graph_index():
         "edges": []
     }
 
-    all_nodes = store.find(Node)
+    all_nodes = db().find(Node)
 
     for node in all_nodes:
         export["nodes"].append({
@@ -36,15 +36,17 @@ def graph_index():
             "color": '#008'
         })
 
-    all_edges = store.find(Edge)
+    all_edges = db().find(Edge)
 
     for edge in all_edges:
         export["edges"].append({
             "id": "edge-%d" % edge.id,
             "source": edge.source.identifier,
             "target": edge.target.identifier,
-            "size": random(),
-            "color": '#444'
+            "label": edge.origin,
+            #"size": random(),
+            "color": '#444',
+            "type": "curve"
         })
 
     return json.dumps(export)
@@ -56,4 +58,4 @@ def graph_add():
     return 'Hello, JC'
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
