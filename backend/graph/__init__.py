@@ -5,12 +5,12 @@ import json
 from flask import Blueprint, request
 from db import *
 
-mod = Blueprint('graph', __name__, url_prefix='/graph')
+mod = Blueprint("graph", __name__, url_prefix="/graph")
 
 """ NODES """
 
-@mod.route('/nodes', methods=['GET'])
-@mod.route('/nodes/<string:identifier>', methods=['GET'])
+@mod.route('/nodes', methods=["GET"])
+@mod.route('/nodes/<string:identifier>', methods=["GET"])
 def get_nodes(identifier=None):
 
     if identifier:
@@ -23,7 +23,7 @@ def get_nodes(identifier=None):
     return json.dumps(export)
 
 
-@mod.route('/nodes', methods=['POST, PUT'])
+@mod.route('/nodes', methods=["POST", "PUT"])
 def createupdate_node():
     req = request.get_json()
     print "Got req", req
@@ -40,7 +40,7 @@ def createupdate_node():
     db().commit()
 
 
-@mod.route('/nodes/<string:identifier>', methods=['DELETE'])
+@mod.route('/nodes/<string:identifier>', methods=["DELETE"])
 def delete_node(identifier=None):
        
     node = db().find(Node, Node.identifier == identifier).one()
@@ -79,7 +79,7 @@ def get_edges(identifier=None):
     return json.dumps(export)
 
 
-@mod.route('/edges', methods=['POST'])
+@mod.route('/edges', methods=["POST", "PUT"])
 def create_edge():
     req = request.get_json()
     print "Got req", req
