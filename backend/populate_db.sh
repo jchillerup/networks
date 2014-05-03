@@ -1,4 +1,4 @@
 #!/bin/sh
 
 sqlite3 graph.db < schema.sql
-python populate_dummy_data.py
+python2 populate_dummy_data.py

@@ -29,9 +29,9 @@ def create_node():
     print "Got req", req
 
     node = db().add(Node())
-    node.identifier = req["id"]
+    node.identifier = req[u"id"]
 
-    for key, value in req["properties"].items():
+    for key, value in req[u"properties"].items():
         prop = NodeProperty()
         prop.key = key
         prop.value = values
