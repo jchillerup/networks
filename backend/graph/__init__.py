@@ -85,6 +85,7 @@ def read_edges(identifier=None):
         export = edge.one().serialize()
     else:
         all_edges = db().find(Edge)
+        print list(all_edges)
         export = map(lambda edge: edge.serialize(), all_edges)
    
     return json.dumps(export)
@@ -93,18 +94,35 @@ def read_edges(identifier=None):
 @mod.route('/edges', methods=["POST", "PUT"])
 def createupdate_edge():
     req = request.get_json()
-    print "Got req", req
 
-    edge = db().add(Edge())
-    edge.identifier = req["id"]
-    edge.origin = req["origin"]
-    edge.confidence = req["confidence"]
+    identifier = req[u"id"]
 
-    for key, value in req["properties"].items():
+    edge = db().find(Edge, Edge.identifier == identifier).one()
+    
+    if edge is None:
+        edge = db().add(Edge())
+        edge.identifier = identifier
+
+    edge.origin = req[u"origin"]
+    edge.confidence = req[u"confidence"]
+
+    source = db().find(Node, Node.identifier == req[u"source"]).one()
+    target = db().find(Node, Node.identifier == req[u"target"]).one()
+
+    edge.source = source
+    edge.target = target
+
+    props = db().find(EdgeProperty, EdgeProperty.edge_id == Edge.id, Edge.identifier == identifier)
+
+    for prop in props:
+        db().remove(prop)
+
+    for key, value in req[u"properties"].items():
         prop = EdgeProperty()
         prop.key = key
         prop.value = values
         edge.properties.add(prop)
+
 
     db().commit()
 
