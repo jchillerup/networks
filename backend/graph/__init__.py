@@ -36,7 +36,9 @@ def createupdate_node():
         node.identifier = identifier
 
     props = db().find(NodeProperty, NodeProperty.node_id == Node.id, Node.identifier == identifier)
-    db().remove(props)
+
+    for prop in props:
+        db().remove(prop)
 
     for key, value in req[u"properties"].items():
         prop = NodeProperty()
