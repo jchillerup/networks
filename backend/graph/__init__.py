@@ -39,6 +39,8 @@ def createupdate_node():
 
     db().commit()
 
+    return ""  
+
 
 @mod.route('/nodes/<string:identifier>', methods=["DELETE"])
 def delete_node(identifier=None):
