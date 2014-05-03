@@ -121,6 +121,9 @@ def createupdate_edge():
         source = db().find(Node, Node.identifier == req[u"source"]).one()
         target = db().find(Node, Node.identifier == req[u"target"]).one()
 
+        if target is None or source is None:
+            raise Exception("invalid target or source")
+
         edge.source = source
         edge.target = target
 
