@@ -15,7 +15,7 @@ app = Flask(__name__)
 def index():
     return redirect(url_for('static', filename="index.html"))
 
-@app.route('/graph/nodes/', methods=['GET'], defaults={identifier: None})
+@app.route('/graph/nodes/', methods=['GET'], defaults={"identifier": None})
 @app.route('/graph/nodes/<string:identifier>', methods=['GET'])
 def get_nodes(identifier):
 
