@@ -1,7 +1,34 @@
+var Edge = Backbone.Model.extend({
+    url: '/graph/edges'
+});
+
+var EdgeCollection = Backbone.Collection.extend({
+    model: Edge,
+    url: "/graph/edges",
+    initialize: function() {
+        console.log("Edge collection initialized");
+        this.fetch();
+    }
+});
+
 var Node = Backbone.Model.extend({
     url: '/graph/nodes',
     initialize: function() {
         // make sure to enclose get('properties') as a backbone model too
+    },
+    
+    setProperty: function(key, value) {
+        var props = this.get('properties');
+        props[key] = value;
+        this.set('properties', props);
+        
+        this.trigger('change:properties');
+    },
+    
+    addEdgeTo: function(to) {
+        var eid = this.id + "->" + to.id;
+        var e = new Edge({id: eid, source: this.id, target: to.id, origin: "manual", confidence: 1, properties: {}});
+        e.save();
     }
 });
 
@@ -14,16 +41,7 @@ var NodeCollection = Backbone.Collection.extend({
     }
 });
 
-var Edge = Backbone.Model.extend({});
 
-var EdgeCollection = Backbone.Collection.extend({
-    model: Edge,
-    url: "/graph/edges",
-    initialize: function() {
-        console.log("Edge collection initialized");
-        this.fetch();
-    }
-});
 
 var PropertiesView = Backbone.View.extend({
     active: null,
@@ -42,12 +60,12 @@ var PropertiesView = Backbone.View.extend({
         
         var node = this.model.get({cid: this.active});
         
-        var $list = this.$('ul');
+        var $list = this.$('tbody');
         
         $list.empty();
         
         for (var attr in node.get('properties')) {
-            $("<li>"+attr+": "+node.get('properties')[attr]+"</li>").appendTo($list);
+            $("<tr><td>"+attr+"</td><td>"+node.get('properties')[attr]+"</td></tr>").appendTo($list);
         }
     },
     
@@ -56,6 +74,15 @@ var PropertiesView = Backbone.View.extend({
             return this.model.get({cid: this.active});
         
         return null;
+    },
+    
+    addProperty: function() {
+        var key = prompt("Property name");
+        var value = prompt("Value");
+        
+        
+        var n = this.getActiveNode();
+        n.setProperty(key, value);
     }
 });
 
@@ -78,10 +105,7 @@ var GraphView = Backbone.View.extend({
 
         var data = {nodes: [], edges: []};
         
-        // Render every time any of our attached models sync
         for (var model in attr.models) {
-            attr.models[model].on('sync', _.bind(this.render, this));
-            
             this.models[model] = attr.models[model];
         }
 
@@ -90,6 +114,64 @@ var GraphView = Backbone.View.extend({
         this.sigmaGraph = new sigma({graph: data, container: container});
         this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
         
+        
+        this.models['edges'].on('add', _.bind(this.newEdge, this));
+        this.models['nodes'].on('add', _.bind(this.newNode, this));
+
+    },
+    
+    makeNiceDown: function() {
+        this.sigmaGraph.startForceAtlas2();
+    },
+    makeNiceUp: function() {
+        this.sigmaGraph.stopForceAtlas2();
+    },
+    
+    newNode: function(node, collection, xmlhttp) {
+        var graph = this.sigmaGraph;
+
+        console.log('new node');
+        
+        var flatnode = node.toJSON();
+        //flatnode.id = flatnode.identifier;
+        
+        flatnode.x = Math.random();
+        flatnode.y = Math.random();
+        flatnode.size = 1;
+        flatnode.label = flatnode.identifier;
+        flatnode.cid = node.cid;
+        
+        graph.graph.addNode(flatnode);
+        
+        this.render();
+    },
+    
+    newEdge: function(edge,collection,xmlhttp) {
+        var graph = this.sigmaGraph;
+        var flatedge = edge.toJSON();
+        graph.graph.addEdge(flatedge);
+        
+        this.render();
+    },
+
+    render: _.debounce(function() {
+        var graph = this.sigmaGraph;
+        
+        graph.refresh();
+    }, 50)
+});
+
+
+var nodes = new NodeCollection();
+var edges = new EdgeCollection();
+var propsView = new PropertiesView({el: "#propertyView", model: nodes});
+var view = new GraphView({el: "#graphView", models: {nodes: nodes, edges: edges}, propsView: propsView});
+
+
+
+
+        
+
         /*
          drawingProperties({
          defaultLabelColor: '#222',
@@ -101,49 +183,3 @@ var GraphView = Backbone.View.extend({
          defaultEdgeType: 'curve',
          defaultEdgeArrow: 'target'
          */
-    },
-    
-    makeNiceDown: function() {
-        this.sigmaGraph.startForceAtlas2();
-    },
-    makeNiceUp: function() {
-        this.sigmaGraph.stopForceAtlas2();
-    },
-
-    render: _.debounce(function() {
-        var graph = this.sigmaGraph;
-        
-        var nodes = this.models['nodes'].toJSON();
-        var edges = this.models['edges'].toJSON();
-        
-        this.models['nodes'].each(function(node) {
-            var flatnode = node.toJSON();
-            //flatnode.id = flatnode.identifier;
-            
-            flatnode.x = Math.random();
-            flatnode.y = Math.random();
-            flatnode.size = 1;
-            flatnode.label = flatnode.identifier;
-            flatnode.cid = node.cid;
-
-            console.log(flatnode);
-
-            graph.graph.addNode(flatnode);
-        });
-        
-        this.models['edges'].each(function(edge) {
-            var flatedge = edge.toJSON();
-            //flatedge['id'] = 'e' + flatedge['id'];
-            console.log(flatedge);
-            graph.graph.addEdge(flatedge);
-        });
-        
-        graph.refresh();
-    }, 150)
-});
-
-
-var nodes = new NodeCollection();
-var edges = new EdgeCollection();
-var propsView = new PropertiesView({el: "#propertyView", model: nodes});
-var view = new GraphView({el: "#graphView", models: {nodes: nodes, edges: edges}, propsView: propsView});
