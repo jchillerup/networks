@@ -9,7 +9,7 @@ class Node(Storm):
     outbound = ReferenceSet(id, "Edge.source_id")
 
     def __repr__(self):
-        return self.identifier
+        return "<node: %s>" % self.identifier
 
     def serialize(self):
         obj = {
@@ -39,14 +39,14 @@ class Edge(Storm):
     properties = ReferenceSet(id, "EdgeProperty.edge_id")
 
     def __repr__(self):
-        return "%s (%s) %s" % (self.source.identifier, self.target.identifier)
+        return "<edge: %s (%s) %s>" % (self.source.identifier, self.target.identifier)
 
     def serialize(self):
         obj = {
             "confidence": self.confidence,
             "origin": self.origin,
-            "source": self.source,
-            "target": self.target,
+            "source": self.source.identifier,
+            "target": self.target.identifier,
             "properties": _key_value(self.properties)
         }
         return obj
