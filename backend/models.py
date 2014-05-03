@@ -13,6 +13,7 @@ class Node(Storm):
 
     def serialize(self):
         obj = {
+            "id": self.id,
             "identifier": self.identifier,
             "properties": _key_value(self.properties)
         }
@@ -43,6 +44,7 @@ class Edge(Storm):
 
     def serialize(self):
         obj = {
+            "id": self.id,
             "confidence": self.confidence,
             "origin": self.origin,
             "source": self.source.identifier,

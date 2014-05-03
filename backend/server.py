@@ -15,11 +15,15 @@ app = Flask(__name__)
 def index():
     return redirect(url_for('static', filename="index.html"))
 
-@app.route('/graph/nodes/', methods=['GET'], defaults={"identifier": None})
+@app.route('/graph/nodes/<int:id>', methods=['GET'])
+@app.route('/graph/nodes/', methods=['GET'])
 @app.route('/graph/nodes/<string:identifier>', methods=['GET'])
-def get_nodes(identifier):
+def get_nodes(id=None, identifier=None):
 
-    if identifier:
+    if id:
+        node = db().find(Node, Node.id == id)
+        export = node.one().serialize()
+    elif identifier:
         node = db().find(Node, Node.identifier == identifier)
         export = node.one().serialize()
     else:
@@ -27,6 +31,22 @@ def get_nodes(identifier):
         export = map(lambda node: node.serialize(), all_nodes)
    
     return json.dumps(export)
+
+
+@app.route('/graph/edges/', methods=['GET'], defaults={"id": None})
+@app.route('/graph/edges/<int:id>', methods=['GET'])
+def get_edges(id):
+
+    if identifier:
+        edge = db().find(Edge, Edge.id == id)
+        export = edge.one().serialize()
+    else:
+        all_edges = db().find(Edge)
+        export = map(lambda node: edge.serialize(), all_edges)
+   
+    return json.dumps(export)
+
+
 
 @app.route('/graph/node')
 def get_node():
