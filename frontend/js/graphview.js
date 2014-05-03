@@ -4,8 +4,8 @@ var GraphView = Backbone.View.extend({
     events: {
         "mouseup #niceButton": "makeNiceUp",
         "mousedown #niceButton": "makeNiceDown",
-        "click #addNodeButton": "unimplemented",
-        "click #addEdgeButton": "unimplemented"
+        "click #addNodeButton": "addNode",
+        "click #addEdgeButton": "addEdge"
     },
     unimplemented: function() {
         console.error('Unimplemented!');
@@ -24,12 +24,10 @@ var GraphView = Backbone.View.extend({
         this.propsView = attr.propsView;
 
         this.sigmaGraph = new sigma({graph: data, container: container});
-        this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
-        
+        this.sigmaGraph.bind('clickNode', function(ev) { console.log(ev);  propsView.show(ev.data.node.cid); });
         
         this.models['edges'].on('add', _.bind(this.newEdge, this));
         this.models['nodes'].on('add', _.bind(this.newNode, this));
-
     },
     
     makeNiceDown: function() {
@@ -42,15 +40,14 @@ var GraphView = Backbone.View.extend({
     newNode: function(node, collection, xmlhttp) {
         var graph = this.sigmaGraph;
 
-        console.log('new node');
-        
         var flatnode = node.toJSON();
         //flatnode.id = flatnode.identifier;
         
         flatnode.x = Math.random();
         flatnode.y = Math.random();
         flatnode.size = 1;
-        flatnode.label = flatnode.identifier;
+        flatnode.label = flatnode.id;
+        flatnode.color = "red";
         flatnode.cid = node.cid;
         
         graph.graph.addNode(flatnode);
@@ -70,5 +67,22 @@ var GraphView = Backbone.View.extend({
         var graph = this.sigmaGraph;
         
         graph.refresh();
-    }, 50)
+    }, 50),
+    
+    addNode: function() {
+        var identifier = prompt("Identifier?");
+        
+        var node = new Node({id: identifier, properties: {}});
+        
+        this.models['nodes'].add(node);
+        
+        node.save();
+        
+        propsView.show(node.get('cid'));
+        propsView.render();
+    },
+    
+    addEdge: function() {
+        console.log(this);
+    }
 });
