@@ -96,7 +96,6 @@ def read_edges(identifier=None):
         export = edge.one().serialize()
     else:
         all_edges = db().find(Edge)
-        print list(all_edges)
         export = map(lambda edge: edge.serialize(), all_edges)
    
     return json.dumps(export)
