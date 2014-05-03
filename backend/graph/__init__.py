@@ -2,7 +2,7 @@
 
 import json
 
-from flask import Blueprint
+from flask import Blueprint, request
 from db import *
 
 mod = Blueprint('graph', __name__, url_prefix='/graph')
@@ -10,14 +10,10 @@ mod = Blueprint('graph', __name__, url_prefix='/graph')
 """ NODES """
 
 @mod.route('/nodes', methods=['GET'])
-@mod.route('/nodes/<int:id>', methods=['GET'])
 @mod.route('/nodes/<string:identifier>', methods=['GET'])
-def get_nodes(id=None, identifier=None):
+def get_nodes(identifier=None):
 
-    if id:
-        node = db().find(Node, Node.id == id)
-        export = node.one().serialize()
-    elif identifier:
+    if identifier:
         node = db().find(Node, Node.identifier == identifier)
         export = node.one().serialize()
     else:
@@ -29,23 +25,34 @@ def get_nodes(id=None, identifier=None):
 
 @mod.route('/nodes', methods=['POST'])
 def create_node():
-    print "GOT PUT"
+    req = request.get_json()
+    print "Got req", req
+
+    node = db().add(Node())
+    node.identifier = req["id"]
+
+    for key, value in req["properties"].items():
+        prop = NodeProperty()
+        prop.key = key
+        prop.value = values
+        node.properties.add(prop)
+
+    db().commit()
+
+    return ""
+
+@mod.route('/nodes/<string:identifier>', methods=['PUT'])
+def update_node(identifier=None):
+    req = request.get_json()
+
+    print "Got req", req
     return "not implemented"
 
-@mod.route('/nodes/<int:id>', methods=['PUSH'])
-@mod.route('/nodes/<string:identifier>', methods=['PUSH'])
-def update_node(id=None, identifier=None):
-    print "GOT PUSH"
-    return "not implemented"
 
-@mod.route('/nodes/<int:id>', methods=['DELETE'])
 @mod.route('/nodes/<string:identifier>', methods=['DELETE'])
-def delete_node(id=None, identifier=None):
+def delete_node(identifier=None):
        
-    if id:
-        node = db().find(Node, Node.id == id).one()
-    elif identifier:
-        node = db().find(Node, Node.identifier == identifier).one()
+    node = db().find(Node, Node.identifier == identifier).one()
     
     if not node:
         raise Exception("not found")
@@ -67,12 +74,12 @@ def delete_node(id=None, identifier=None):
 """ EDGES """
 
 
-@mod.route('/edges', methods=['GET'], defaults={"id": None})
-@mod.route('/edges/<int:id>', methods=['GET'])
-def get_edges(id):
+@mod.route('/edges', methods=['GET'])
+@mod.route('/edges/<string:identifier>', methods=['GET'])
+def get_edges(identifier=None):
 
-    if id:
-        edge = db().find(Edge, Edge.id == id)
+    if identifier:
+        edge = db().find(Edge, Edge.identifier == identifier)
         export = edge.one().serialize()
     else:
         all_edges = db().find(Edge)
@@ -81,14 +88,31 @@ def get_edges(id):
     return json.dumps(export)
 
 
-@mod.route('/edges/<int:id>', methods=['DELETE'])
+@mod.route('/edges', methods=['POST'])
+def create_edge():
+    req = request.get_json()
+    print "Got req", req
+
+    edge = db().add(Edge())
+    edge.identifier = req["id"]
+    edge.origin = req["origin"]
+    edge.confidence = req["confidence"]
+
+    for key, value in req["properties"].items():
+        prop = EdgeProperty()
+        prop.key = key
+        prop.value = values
+        edge.properties.add(prop)
+
+    db().commit()
+
+    return ""
+
+
 @mod.route('/edges/<string:identifier>', methods=['DELETE'])
-def delete_edge(id=None, identifier=None):
-       
-    if id:
-        edge = db().find(Edge, Edge.id == id).one()
-    elif identifier:
-        edge = db().find(Edge, Edge.identifier == identifier).one()
+def delete_edge(identifier=None):
+    
+    edge = db().find(Edge, Edge.identifier == identifier).one()
     
     if not node:
         raise Exception("not found")
@@ -97,3 +121,4 @@ def delete_edge(id=None, identifier=None):
     db().commit()
     
     return ""
+

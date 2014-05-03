@@ -36,26 +36,29 @@ e = db().add(Edge())
 e.source = n1
 e.target = n2
 e.origin = u"facebook"
+e.identifier = u"facebook:" + e.source.identifier + "->" + e.target.identifier
 
 e = db().add(Edge())
 e.source = n2
 e.target = n1
 e.origin = u"facebook"
-
+e.identifier = u"facebook:" + e.source.identifier + "->" + e.target.identifier
 
 e = db().add(Edge())
 e.source = n1
 e.target = n3
 e.origin = u"facebook"
-
+e.identifier = u"facebook:" + e.source.identifier + "->" + e.target.identifier
 
 e = db().add(Edge())
 e.source = n3
 e.target = n1
 e.origin = u"facebook"
+e.identifier = u"facebook:" + e.source.identifier + "->" + e.target.identifier
 
 e.source = n3
 e.target = n2
 e.origin = u"facebook"
+e.identifier = u"facebook:" + e.source.identifier + "->" + e.target.identifier
 
 db().commit()

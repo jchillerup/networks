@@ -13,8 +13,7 @@ class Node(Storm):
 
     def serialize(self):
         obj = {
-            "id": self.id,
-            "identifier": self.identifier,
+            "id": self.identifier,
             "properties": _key_value(self.properties)
         }
         return obj
@@ -31,6 +30,7 @@ class NodeProperty(Storm):
 class Edge(Storm):
     __storm_table__ = "edge"
     id = Int(primary=True)
+    identifier = Unicode()
     origin = Unicode()
     confidence = Float()
     source_id = Int()
@@ -44,7 +44,7 @@ class Edge(Storm):
 
     def serialize(self):
         obj = {
-            "id": self.id,
+            "id": self.identifier,
             "confidence": self.confidence,
             "origin": self.origin,
             "source": self.source.identifier,

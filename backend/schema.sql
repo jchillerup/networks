@@ -10,6 +10,7 @@ CREATE TABLE node (
 
 CREATE TABLE edge (
     id INTEGER PRIMARY KEY,
+    identifier TEXT,
     origin TEXT,
     confidence REAL,
     source_id INTEGER,
