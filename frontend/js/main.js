@@ -4,25 +4,44 @@ var Node = Backbone.Model.extend({
     }
 });
 
+var Network = Backbone.Collection.extend({
+    model: Node
+});
+
 var GraphView = Backbone.View.extend({
+    sigmaGraph: null,
+    
+    events: {
+        "mouseup #niceButton": "makeNiceUp",
+        "mousedown #niceButton": "makeNiceDown"
+    },
+
     initialize: function() {
-
         var container = this.$el.attr('id');
-       
-        $.getJSON("/graph", function(data) {
 
-            var s = new sigma({graph: data, container: container});
-                        
-            s.startForceAtlas2();
-            
-            setTimeout(function() {
-                s.stopForceAtlas2();
-            }, 1000);
-
-        });
-        
+        $.getJSON("/graph", _.bind(function(data) {
+            this.sigmaGraph = new sigma({graph: data, container: container});
+                
+                /*.drawingProperties({
+                defaultLabelColor: '#222',
+                defaultLabelSize: 14,
+                defaultLabelHoverColor: '#000',
+                labelThreshold: 6,
+                font: 'Arial',
+                edgeColor: 'source',
+                defaultEdgeType: 'curve',
+                defaultEdgeArrow: 'target'
+            });*/
+        }, this));
     },
     
+    makeNiceDown: function() {
+        this.sigmaGraph.startForceAtlas2();
+    },
+    makeNiceUp: function() {
+        this.sigmaGraph.stopForceAtlas2();
+    },
+
     render: function() {
     }
 });
