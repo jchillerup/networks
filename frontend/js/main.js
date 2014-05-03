@@ -1,4 +1,5 @@
 var Node = Backbone.Model.extend({
+    url: '/graph/nodes',
     initialize: function() {
         // make sure to enclose get('properties') as a backbone model too
     }
@@ -6,19 +7,10 @@ var Node = Backbone.Model.extend({
 
 var NodeCollection = Backbone.Collection.extend({
     model: Node,
-    url: "/graph/nodes/",
-    view: null,
-    initialize: function(attr) {
+    url: "/graph/nodes",
+    initialize: function() {
         console.log("Network initialized");
-        
-        this.view = attr.view;
-        
         this.fetch();
-        
-        // set up an event handler that updates the view when the collection updates
-        if (this.view !== null) {
-            this.on("sync", view.render);
-        }
     }
 });
 
@@ -26,10 +18,8 @@ var Edge = Backbone.Model.extend({});
 
 var EdgeCollection = Backbone.Collection.extend({
     model: Edge,
-    url: "/graph/edges/",
-    view: null,
-    initialize: function(attr) {
-        this.view = attr.view;
+    url: "/graph/edges",
+    initialize: function() {
         console.log("Edge collection initialized");
         this.fetch();
     }
@@ -47,23 +37,32 @@ var GraphView = Backbone.View.extend({
     unimplemented: function() {
         console.error('Unimplemented!');
     },
-    initialize: function() {
+    models: [],
+    initialize: function(attr) {
         var container = this.$el.attr('id');
 
         var data = {nodes: [], edges: []};
+        
+        // Render every time any of our attached models sync
+        for (var model in attr.models) {
+            attr.models[model].on('sync', _.bind(this.render, this));
+            
+            this.models[model] = attr.models[model];
+        }
 
         this.sigmaGraph = new sigma({graph: data, container: container});
                 
-                /*.drawingProperties({
-                defaultLabelColor: '#222',
-                defaultLabelSize: 14,
-                defaultLabelHoverColor: '#000',
-                labelThreshold: 6,
-                font: 'Arial',
-                edgeColor: 'source',
-                defaultEdgeType: 'curve',
-                defaultEdgeArrow: 'target'
-            });*/
+        /*
+         drawingProperties({
+         defaultLabelColor: '#222',
+         defaultLabelSize: 14,
+         defaultLabelHoverColor: '#000',
+         labelThreshold: 6,
+         font: 'Arial',
+         edgeColor: 'source',
+         defaultEdgeType: 'curve',
+         defaultEdgeArrow: 'target'
+         */
     },
     
     makeNiceDown: function() {
@@ -74,11 +73,37 @@ var GraphView = Backbone.View.extend({
     },
 
     render: _.debounce(function() {
-        console.log('view render');
+        var graph = this.sigmaGraph;
+        
+        var nodes = this.models['nodes'].toJSON();
+        var edges = this.models['edges'].toJSON();
+        
+        this.models['nodes'].each(function(node) {
+            var flatnode = node.toJSON();
+            //flatnode.id = flatnode.identifier;
+            
+            flatnode.x = Math.random();
+            flatnode.y = Math.random();
+            flatnode.size = 1;
+            flatnode.label = flatnode.identifier;
+            
+            console.log(flatnode);
+
+            graph.graph.addNode(flatnode);
+        });
+        
+        this.models['edges'].each(function(edge) {
+            var flatedge = edge.toJSON();
+            //flatedge['id'] = 'e' + flatedge['id'];
+            console.log(flatedge);
+            graph.graph.addEdge(flatedge);
+        });
+        
+        graph.refresh();
     }, 150)
 });
 
 
-var view = new GraphView({el: "#graphView"});
-var nodes = new NodeCollection({view: view});
-var edges = new EdgeCollection({view: view});
+var nodes = new NodeCollection();
+var edges = new EdgeCollection();
+var view = new GraphView({el: "#graphView", models: {nodes: nodes, edges: edges}});
