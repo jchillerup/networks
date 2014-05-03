@@ -43,7 +43,7 @@ def createupdate_node():
     for key, value in req[u"properties"].items():
         prop = NodeProperty()
         prop.key = key
-        prop.value = values
+        prop.value = value
         node.properties.add(prop)
 
     db().commit()
@@ -120,7 +120,7 @@ def createupdate_edge():
     for key, value in req[u"properties"].items():
         prop = EdgeProperty()
         prop.key = key
-        prop.value = values
+        prop.value = value
         edge.properties.add(prop)
 
 
