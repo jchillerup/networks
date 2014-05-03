@@ -26,9 +26,14 @@ var Node = Backbone.Model.extend({
     },
     
     addEdgeTo: function(to) {
-        var eid = this.id + "->" + to.id;
-        var e = new Edge({id: eid, source: this.id, target: to.id, origin: "manual", confidence: 1, properties: {}});
-        e.save();
+        console.log([this, to]);
+        var eid = this.get('id') + "->" + to.get('id');
+        var e = new Edge({id: eid, identifier: eid, source: this.get('id'), target: to.get('id'), origin: "manual", confidence: 1, properties: {}});
+        //e.save();
+        
+        console.log(eid);
+        
+        return e;
     }
 });
 
