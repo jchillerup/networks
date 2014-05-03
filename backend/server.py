@@ -8,7 +8,6 @@ import json
 # TEMP IMPORTS
 from random import random
 
-
 app = Flask(__name__)
 
 
@@ -19,35 +18,13 @@ def index():
 @app.route('/graph')
 def graph_index():
 
-    export = {
-        "nodes": [],
-        "edges": []
-    }
+    export = {}
 
     all_nodes = db().find(Node)
-
-    for node in all_nodes:
-        export["nodes"].append({
-            "id": node.identifier,
-            "label": node.identifier,
-            "x": random(),
-            "y": random(),
-            "size": 1,
-            "color": '#008'
-        })
-
     all_edges = db().find(Edge)
 
-    for edge in all_edges:
-        export["edges"].append({
-            "id": "edge-%d" % edge.id,
-            "source": edge.source.identifier,
-            "target": edge.target.identifier,
-            "label": edge.origin,
-            #"size": random(),
-            "color": '#444',
-            "type": "curve"
-        })
+    export["nodes"] = map(lambda node: node.serialize(), all_nodes)
+    export["edges"] = map(lambda edge: edge.serialize(), all_edges)
 
     return json.dumps(export)
 

@@ -11,6 +11,14 @@ class Node(Storm):
     def __repr__(self):
         return self.identifier
 
+    def serialize(self):
+        obj = {
+            "identifier": self.identifier,
+            "properties": _key_value(self.properties)
+        }
+        return obj
+
+
 class NodeProperty(Storm):
     __storm_table__ = "nodeprop"
     id = Int(primary=True)
@@ -28,10 +36,20 @@ class Edge(Storm):
     target_id = Int()
     source = Reference(source_id, "Node.id")
     target = Reference(target_id, "Node.id")
-    properties = ReferenceSet(id, "EdgeProperty.node_id")
+    properties = ReferenceSet(id, "EdgeProperty.edge_id")
 
     def __repr__(self):
         return "%s (%s) %s" % (self.source.identifier, self.target.identifier)
+
+    def serialize(self):
+        obj = {
+            "confidence": self.confidence,
+            "origin": self.origin,
+            "source": self.source,
+            "target": self.target,
+            "properties": _key_value(self.properties)
+        }
+        return obj
 
 class EdgeProperty(Storm):
     __storm_table__ = "edgeprop"
@@ -41,3 +59,8 @@ class EdgeProperty(Storm):
     value = Unicode()
     edge = Reference(edge_id, "Edge.id")
 
+def _key_value(propobj):
+    kv = {}
+    for obj in propobj:
+        kv[obj.key] = obj.value
+    return kv
