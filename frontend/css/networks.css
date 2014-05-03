@@ -10,7 +10,8 @@
     top: 20px;
     right: 20px;
     bottom: 20px;
-    width: 15%;
+    width: 20%;
+    padding: 20px;
 
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid #666;
@@ -25,4 +26,20 @@
 
     z-index: 10000;
     margin: 10px;
+}
+
+#propertyView table {
+    width: 100%;
+
+    border: 1px solid #aaa;
+    
+}
+
+#propertyView table thead th {
+    text-align: center;
+    font-size: 0.8em;
+}
+
+#propertyView table tbody td {
+    font-size: 0.8em;
 }
