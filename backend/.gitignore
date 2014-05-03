@@ -1,2 +1,3 @@
 *.pyc
 graph.db
+test.py
