@@ -13,8 +13,8 @@ def index():
 
 
 # /graph
-import endpoint_graph
-app.register_blueprint(endpoint_graph.mod)
+import graph
+app.register_blueprint(graph.mod)
 
 if __name__ == '__main__':
     app.run(debug=True)

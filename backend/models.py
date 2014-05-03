@@ -40,7 +40,7 @@ class Edge(Storm):
     properties = ReferenceSet(id, "EdgeProperty.edge_id")
 
     def __repr__(self):
-        return "<edge: %s (%s) %s>" % (self.source.identifier, self.target.identifier)
+        return "<edge: %s (%s) %s>" % (self.source.identifier, self.origin, self.target.identifier)
 
     def serialize(self):
         obj = {
