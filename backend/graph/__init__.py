@@ -23,8 +23,8 @@ def get_nodes(identifier=None):
     return json.dumps(export)
 
 
-@mod.route('/nodes', methods=['POST'])
-def create_node():
+@mod.route('/nodes', methods=['POST, PUT'])
+def createupdate_node():
     req = request.get_json()
     print "Got req", req
 
@@ -38,15 +38,6 @@ def create_node():
         node.properties.add(prop)
 
     db().commit()
-
-    return ""
-
-@mod.route('/nodes/<string:identifier>', methods=['PUT'])
-def update_node(identifier=None):
-    req = request.get_json()
-
-    print "Got req", req
-    return "not implemented"
 
 
 @mod.route('/nodes/<string:identifier>', methods=['DELETE'])
