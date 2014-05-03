@@ -16,5 +16,9 @@ def index():
 import graph
 app.register_blueprint(graph.mod)
 
+# /analysis
+import analysis
+app.register_blueprint(analysis.mod)
+
 if __name__ == '__main__':
     app.run(debug=True)
