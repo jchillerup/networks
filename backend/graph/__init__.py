@@ -77,7 +77,7 @@ def delete_node(identifier=None):
         db().remove(node)
         db().commit()
 
-     except Exception, e:
+    except Exception, e:
         db().rollback()
         raise e
 
@@ -137,8 +137,7 @@ def createupdate_edge():
 
         db().commit()
 
-     except Exception, e:
-        
+    except Exception, e:
         db().rollback()
         raise e
 
