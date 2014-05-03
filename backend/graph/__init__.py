@@ -27,48 +27,59 @@ def read_nodes(identifier=None):
 def createupdate_node():
     req = request.get_json()
 
-    identifier = req[u"id"]
+    try:
 
-    node = db().find(Node, Node.identifier == identifier).one()
+        identifier = req[u"id"]
 
-    if node is None:
-        node = db().add(Node())
-        node.identifier = identifier
+        node = db().find(Node, Node.identifier == identifier).one()
 
-    props = db().find(NodeProperty, NodeProperty.node_id == Node.id, Node.identifier == identifier)
+        if node is None:
+            node = db().add(Node())
+            node.identifier = identifier
 
-    for prop in props:
-        db().remove(prop)
+        props = db().find(NodeProperty, NodeProperty.node_id == Node.id, Node.identifier == identifier)
 
-    for key, value in req[u"properties"].items():
-        prop = NodeProperty()
-        prop.key = key
-        prop.value = value
-        node.properties.add(prop)
+        for prop in props:
+            db().remove(prop)
 
-    db().commit()
+        for key, value in req[u"properties"].items():
+            prop = NodeProperty()
+            prop.key = key
+            prop.value = value
+            node.properties.add(prop)
+
+        db().commit()
+
+    except Exception, e:
+        db().rollback()
+        raise e
 
     return ""  
 
 
 @mod.route('/nodes/<string:identifier>', methods=["DELETE"])
 def delete_node(identifier=None):
-       
-    node = db().find(Node, Node.identifier == identifier).one()
     
-    if not node:
-        raise Exception("not found")
+    try:
+        node = db().find(Node, Node.identifier == identifier).one()
+        
+        if not node:
+            raise Exception("not found")
 
-    # remove all edges to this node
-    for inbound in node.inbound:
-        db().remove(inbound)
+        # remove all edges to this node
+        for inbound in node.inbound:
+            db().remove(inbound)
 
-    # remove all edges from this node
-    for outbound in node.outbound:
-        db().remove(outbound)
+        # remove all edges from this node
+        for outbound in node.outbound:
+            db().remove(outbound)
 
-    db().remove(node)
-    db().commit()
+        db().remove(node)
+        db().commit()
+
+     except Exception, e:
+        db().rollback()
+        raise e
 
     return ""
 
@@ -95,36 +106,41 @@ def read_edges(identifier=None):
 def createupdate_edge():
     req = request.get_json()
 
-    identifier = req[u"id"]
+    try:
+        identifier = req[u"id"]
 
-    edge = db().find(Edge, Edge.identifier == identifier).one()
-    
-    if edge is None:
-        edge = db().add(Edge())
-        edge.identifier = identifier
+        edge = db().find(Edge, Edge.identifier == identifier).one()
+        
+        if edge is None:
+            edge = db().add(Edge())
+            edge.identifier = identifier
 
-    edge.origin = req[u"origin"]
-    edge.confidence = req[u"confidence"]
+        edge.origin = req[u"origin"]
+        edge.confidence = req[u"confidence"]
 
-    source = db().find(Node, Node.identifier == req[u"source"]).one()
-    target = db().find(Node, Node.identifier == req[u"target"]).one()
+        source = db().find(Node, Node.identifier == req[u"source"]).one()
+        target = db().find(Node, Node.identifier == req[u"target"]).one()
 
-    edge.source = source
-    edge.target = target
+        edge.source = source
+        edge.target = target
 
-    props = db().find(EdgeProperty, EdgeProperty.edge_id == Edge.id, Edge.identifier == identifier)
+        props = db().find(EdgeProperty, EdgeProperty.edge_id == Edge.id, Edge.identifier == identifier)
 
-    for prop in props:
-        db().remove(prop)
+        for prop in props:
+            db().remove(prop)
 
-    for key, value in req[u"properties"].items():
-        prop = EdgeProperty()
-        prop.key = key
-        prop.value = value
-        edge.properties.add(prop)
+        for key, value in req[u"properties"].items():
+            prop = EdgeProperty()
+            prop.key = key
+            prop.value = value
+            edge.properties.add(prop)
 
+        db().commit()
 
-    db().commit()
+     except Exception, e:
+        
+        db().rollback()
+        raise e
 
     return ""
 
