@@ -37,12 +37,12 @@ def get_nodes(id=None, identifier=None):
 @app.route('/graph/edges/<int:id>', methods=['GET'])
 def get_edges(id):
 
-    if identifier:
+    if id:
         edge = db().find(Edge, Edge.id == id)
         export = edge.one().serialize()
     else:
         all_edges = db().find(Edge)
-        export = map(lambda node: edge.serialize(), all_edges)
+        export = map(lambda edge: edge.serialize(), all_edges)
    
     return json.dumps(export)
 
