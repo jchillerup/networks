@@ -24,7 +24,7 @@ var GraphView = Backbone.View.extend({
         this.propsView = attr.propsView;
 
         this.sigmaGraph = new sigma({graph: data, container: container});
-        this.sigmaGraph.bind('clickNode', function(ev) { console.log(ev);  propsView.show(ev.data.node.cid); });
+        this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
         
         this.models['edges'].on('add', _.bind(this.newEdge, this));
         this.models['nodes'].on('add', _.bind(this.newNode, this));
@@ -76,10 +76,20 @@ var GraphView = Backbone.View.extend({
         
         this.models['nodes'].add(node);
         
-        node.save();
+        node.save({}, {
+            success: function(model, response) {
+                console.log("new node got " + node.cid); 
+                propsView.show(node.get('cid'));
+                propsView.render();
+            },
+            error: function(model, response) {
+                console.log('error saving the new node ' + node.cid);
+                console.log(node.cid);
+                propsView.show(node.cid);
+                propsView.render();
+            }
+        });
         
-        propsView.show(node.get('cid'));
-        propsView.render();
     },
     
     addEdge: function() {

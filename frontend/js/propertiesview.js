@@ -1,7 +1,9 @@
 var PropertiesView = Backbone.View.extend({
     active: null,
     events: {
-        "click #addEdgeButton": "addEdge"
+        "click #addEdgeButton": "addEdge",
+        "click #addProperty": "addProperty",
+        "click #save": "saveNode"
     },
 
     initialize: function() {
@@ -60,5 +62,9 @@ var PropertiesView = Backbone.View.extend({
         
         edges.add(e);
         e.save();
+    },
+    
+    saveNode: function() {
+        this.getActiveNode().save();
     }
 });
