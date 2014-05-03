@@ -20,8 +20,8 @@ def index():
 def get_nodes(identifier):
 
     if identifier:
-        node = db().find(Node, Node.id == identifier)
-        export = nodes.one().serialize()
+        node = db().find(Node, Node.identifier == identifier)
+        export = node.one().serialize()
     else:
         all_nodes = db().find(Node)
         export = map(lambda node: node.serialize(), all_nodes)
