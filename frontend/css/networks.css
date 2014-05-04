@@ -91,6 +91,9 @@ body {
     font-size: 26px;
     height: 73px;
     padding-left: 15px;
+
+    position: relative;
+    top: 11px;
 }
 
 button > i {
