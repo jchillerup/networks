@@ -11,18 +11,34 @@ var PropertiesView = Backbone.View.extend({
         this.model.on('change:properties', _.bind(this.render, this));
         this.hide();
     },
-    
+    getActiveNode: function() {
+        if (this.active !== null) 
+            return this.model.get({cid: this.active});
+        
+        return null;
+    },    
+    getActiveGraphNode: function() {
+        return this.getActiveNode().graphnode;
+    },
+
     show: function(which) {
-        //console.log(this.active.graphNode);
+        // Reset the currently active node to its original color
+        if (this.active !== null) {
+            var gnode = this.getActiveGraphNode();
+            
+            gnode.color = gnode.originalcolor;
+        }
 
         this.$el.show();
-        this.active =  which;
-        console.log(["Setting active to ", this.active]);
-
+        this.active = which;
+        
+        // highlight the new active node
+        this.getActiveGraphNode().color = "#ffffff";
+        
+        view.render(); // HACK, we're updating the main view
         this.render();
 
         if(this.connect !== null){
-
             var to = this.getActiveNode();
 
             if(this.connect == to) return;
@@ -55,13 +71,7 @@ var PropertiesView = Backbone.View.extend({
         $ident.text(node.id);
                 
     },
-    
-    getActiveNode: function() {
-        if (this.active !== null) 
-            return this.model.get({cid: this.active});
-        
-        return null;
-    },
+   
     
     addProperty: function() {
         var key = prompt("Property name");
