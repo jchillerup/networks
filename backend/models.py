@@ -27,6 +27,9 @@ class NodeProperty(Storm):
     value = Unicode()
     node = Reference(node_id, "Node.id")
 
+    def __repr__(self):
+        return "<NodeProperty %s = %s>" % (self.key, repr(self.value))
+
 class Edge(Storm):
     __storm_table__ = "edge"
     id = Int(primary=True)
