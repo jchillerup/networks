@@ -53,12 +53,21 @@ var GraphView = Backbone.View.extend({
         flatnode.x = Math.random();
         flatnode.y = Math.random();
         flatnode.size = 10;
-        flatnode.label = flatnode.id;
+        flatnode.label = flatnode.properties.name || flatnode.id;
         flatnode.color = "#FF9D00";
+        flatnode.originalcolor = flatnode.color;
         flatnode.cid = node.cid;
         
         graph.graph.addNode(flatnode);
-        
+
+        var allnodes = graph.graph.nodes();
+        for(var idx in allnodes){
+            if(allnodes[idx].cid == node.cid){
+                node.graphnode = allnodes[idx];
+                break;
+            }
+        }
+
         this.render();
     },
     
