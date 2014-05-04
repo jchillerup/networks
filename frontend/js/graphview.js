@@ -77,7 +77,7 @@ var GraphView = Backbone.View.extend({
     newEdge: function(edge,collection,xmlhttp) {
         var graph = this.sigmaGraph;
         var flatedge = edge.toJSON();
-        flatedge.color = "#fff";
+        flatedge.color = "rgba(255,255,255,0.2)";
         flatedge.type = "curvedArrow";
         graph.graph.addEdge(flatedge);
         
