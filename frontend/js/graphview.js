@@ -4,7 +4,7 @@ var GraphView = Backbone.View.extend({
     events: {
         "mouseup #niceButton": "makeNiceUp",
         "mousedown #niceButton": "makeNiceDown",
-        "click #addNodeButton": "addNode",
+        "click #addNodeButton": "addNode"
     },
     unimplemented: function() {
         console.error('Unimplemented!');
@@ -126,5 +126,45 @@ var GraphView = Backbone.View.extend({
         });
         
     },
+    
+    clearSearchResults: function(noRender) {
+        this.models['nodes'].each(function(node) {
+            console.log(node);
+            node.graphnode.color = node.graphnode.originalcolor;
+            node.graphnode.size = 10;
+        });
+        
+        if (!noRender)
+            this.render();
+    },
+
+    search: function(term) {
+        term = term.toLowerCase();
+        
+        this.clearSearchResults( true );
+
+        var results = nodes.filter(function(node) {
+            if (node.id.toLowerCase().indexOf(term) !== -1)
+                return true;
+            
+            var props = node.get('properties');
+            
+            for (idx in props)
+                if (props[idx].toLowerCase().indexOf(term) !== -1)
+                    return true;
+            
+            return false;
+        });
+        
+        _.each(results, function(result) {
+            console.log(result);
+            result.graphnode.color = "#f00";
+            result.graphnode.size = 15;
+        });
+        
+        this.render();
+
+        return results;
+    }
     
 });
