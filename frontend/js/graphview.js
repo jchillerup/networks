@@ -50,7 +50,7 @@ var GraphView = Backbone.View.extend({
         var flatnode = node.toJSON();
         //flatnode.id = flatnode.identifier;
         
-        var modulo = Math.sqrt( _.size(this.models['nodes']) );
+        var modulo = Math.ceil(Math.sqrt( _.size(this.models['nodes']) ));
 
         flatnode.x = (this.nodeidx % modulo) / 4;
         flatnode.y = (Math.floor( this.nodeidx++ / modulo )) / 4;
