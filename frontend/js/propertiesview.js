@@ -35,7 +35,7 @@ var PropertiesView = Backbone.View.extend({
         // highlight the new active node
         this.getActiveGraphNode().color = "#ffffff";
         
-        view.render(); // HACK, we're updating the main view
+        view.renderDammit(); // HACK, we're updating the main view
         this.render();
 
         if(this.connect !== null){
@@ -53,6 +53,13 @@ var PropertiesView = Backbone.View.extend({
     },
 
     hide: function(){
+        if (this.active !== null) {
+            var gnode = this.getActiveGraphNode();
+            
+            gnode.color = gnode.originalcolor;
+        }
+        this.active = null;
+        // BUG: should update the graphView.
         this.$el.hide();
     },
 

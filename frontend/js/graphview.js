@@ -32,6 +32,7 @@ var GraphView = Backbone.View.extend({
         this.sigmaGraph.settings("font", "Open Sans");     
 
         this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
+        this.sigmaGraph.bind('clickStage', function(ev) { propsView.hide(); });
         
         this.models['edges'].on('add', _.bind(this.newEdge, this));
         this.models['nodes'].on('add', _.bind(this.newNode, this));
@@ -82,13 +83,19 @@ var GraphView = Backbone.View.extend({
         
         this.render();
     },
-
-    render: _.debounce(function() {
+    
+    renderDammit: function() {
+        var graph = this.sigmaGraph;
+        
+        graph.refresh();
+    },
+    
+    render: _.debounce(function() {   // HACK, get this to call renderDammit
         var graph = this.sigmaGraph;
         
         graph.refresh();
     }, 50),
-    
+
     addNode: function() {
 
 

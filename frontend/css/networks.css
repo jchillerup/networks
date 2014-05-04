@@ -23,7 +23,7 @@ body {
     bottom: 20px;
     width: 265px;
     padding: 20px;
-    background: rgb(122,22,66);
+    background: rgba(122,22,66,0.8);
 }
 
 #logo {
