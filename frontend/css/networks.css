@@ -1,8 +1,19 @@
+body {
+    font-family: 'Open Sans Condensed', sans-serif;
+    color: #fff;
+}
+
 #graphView {
     position: absolute;
     left:0; top: 0; bottom: 0; right: 0;
+    background: rgb(41,38,33);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
-    background: #ccc;
 }
 
 #propertyView {
@@ -10,29 +21,37 @@
     top: 20px;
     right: 20px;
     bottom: 20px;
-    width: 20%;
+    width: 265px;
     padding: 20px;
-
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid #666;
+    background: rgb(56,77,84);
 }
 
 #graphControls {
     position: absolute;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.7);
-    min-height: 25px;
-    border: 1px solid #666;
-
     z-index: 10000;
-    margin: 10px;
 }
 
-#propertyView table {
-    width: 100%;
+#graphControls > button, #propertyView > button {
+    padding: 13px;
+    margin: 5px;
+    font-size: 12px;
+    background-color: rgba(255,157,0, 1);
+    color: rgb(255,255,255);
+    border: 0px solid black;
+    font-family: 'Open Sans', sans-serif;
+    min-width: 75px;
+}
 
-    border: 1px solid #aaa;
-    
+button > i {
+    padding-bottom: 5px;
+    font-size: 25px;
+    color: rgb(255,255,255);
+}
+
+
+#propertyView table {
+    width: 100%;    
 }
 
 #propertyView table thead th {
@@ -42,4 +61,10 @@
 
 #propertyView table tbody td {
     font-size: 0.8em;
+}
+
+#identifierInfo {
+    position: absolute;
+    bottom: 15px;
+    font-size: 12px;
 }

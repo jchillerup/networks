@@ -23,7 +23,12 @@ var GraphView = Backbone.View.extend({
 
         this.propsView = attr.propsView;
 
+        sigma.renderers.def = sigma.renderers.canvas; // HACK panton, drag-n-drop
+
         this.sigmaGraph = new sigma({graph: data, container: container});
+
+        sigma.plugins.dragNodes(this.sigmaGraph, this.sigmaGraph.renderers[0]);// HACK panton, drag-n-drop
+
         this.sigmaGraph.bind('clickNode', function(ev) { propsView.show(ev.data.node.cid); });
         
         this.models['edges'].on('add', _.bind(this.newEdge, this));
@@ -47,7 +52,7 @@ var GraphView = Backbone.View.extend({
         flatnode.y = Math.random();
         flatnode.size = 1;
         flatnode.label = flatnode.id;
-        flatnode.color = "red";
+        flatnode.color = "#FF9D00";
         flatnode.cid = node.cid;
         
         graph.graph.addNode(flatnode);
@@ -58,6 +63,7 @@ var GraphView = Backbone.View.extend({
     newEdge: function(edge,collection,xmlhttp) {
         var graph = this.sigmaGraph;
         var flatedge = edge.toJSON();
+        flatedge.color = "#fff";
         graph.graph.addEdge(flatedge);
         
         this.render();
