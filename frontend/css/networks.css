@@ -24,6 +24,28 @@ body {
     width: 265px;
     padding: 20px;
     background: rgba(122,22,66,0.8);
+    display: none;
+}
+
+#propertyList {
+    margin-top: 15px;
+}
+
+#propertyList .property {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    text-align: right;
+    position: relative;
+    margin: 5px 5px;
+    
+}
+
+#propertyList .property span {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 0.8em;
+    font-style: italic;
 }
 
 #logo {

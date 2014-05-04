@@ -28,8 +28,10 @@ var PropertiesView = Backbone.View.extend({
             
             gnode.color = gnode.originalcolor;
         }
-
-        this.$el.show();
+        
+        if (! this.$el.is(":visible")) {
+            this.$el.fadeIn('fast');
+        }
         this.active = which;
         
         // highlight the new active node
@@ -60,18 +62,18 @@ var PropertiesView = Backbone.View.extend({
         }
         this.active = null;
         // BUG: should update the graphView.
-        this.$el.hide();
+        this.$el.fadeOut('fast');
     },
 
     render: function() {
         var node = this.model.get({cid: this.active});
         
-        var $list = this.$('tbody');
+        var $list = this.$('#propertyList');
         
         $list.empty();
         
         for (var attr in node.get('properties')) {
-            $("<tr><td>"+attr+"</td><td>"+node.get('properties')[attr]+"</td></tr>").appendTo($list);
+            $("<div class=\"property\"><span>"+attr+"</span>"+node.get('properties')[attr]+"</div>").appendTo($list);
         }
 
         var $ident = this.$('#identifierInfo');
