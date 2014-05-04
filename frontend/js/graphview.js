@@ -4,7 +4,8 @@ var GraphView = Backbone.View.extend({
     events: {
         "mouseup #niceButton": "makeNiceUp",
         "mousedown #niceButton": "makeNiceDown",
-        "click #addNodeButton": "addNode"
+        "click #addNodeButton": "addNode",
+        "keyup #searchField": "searchHandler"
     },
     unimplemented: function() {
         console.error('Unimplemented!');
@@ -165,6 +166,17 @@ var GraphView = Backbone.View.extend({
         this.render();
 
         return results;
+    },
+    
+    searchHandler: function(ev) {
+        var term = this.$('#searchField').val();
+        
+        if (term === "") {
+            this.clearSearchResults();
+            return;
+        }
+
+        this.search(term);
     }
     
 });
