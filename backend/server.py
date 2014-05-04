@@ -6,8 +6,8 @@ from flask.ext.socketio import SocketIO, emit
 from db import *
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+#app.config['SECRET_KEY'] = 'secret!'
+#socketio = SocketIO(app)
 
 @app.route('/')
 def index():
@@ -22,4 +22,5 @@ import analysis
 app.register_blueprint(analysis.mod)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    #socketio.run(app)
+    app.run(debug=True)

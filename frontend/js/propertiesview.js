@@ -1,5 +1,6 @@
 var PropertiesView = Backbone.View.extend({
     active: null,
+    connect: null,
     events: {
         "click #addEdgeButton": "addEdge",
         "click #addProperty": "addProperty",
@@ -8,12 +9,34 @@ var PropertiesView = Backbone.View.extend({
 
     initialize: function() {
         this.model.on('change:properties', _.bind(this.render, this));
+        this.hide();
     },
     
     show: function(which) {
+
+        this.$el.show();
         this.active =  which;
         console.log(["Setting active to ", this.active]);
+
         this.render();
+
+        if(this.connect !== null){
+
+            var to = this.getActiveNode();
+
+            if(this.connect == to) return;
+
+            var new_edge = this.connect.addEdgeTo(to);      
+            edges.add(new_edge);
+            new_edge.save();
+
+            this.connect = null;
+        }
+
+    },
+
+    hide: function(){
+        this.$el.hide();
     },
 
     render: function() {
@@ -26,16 +49,10 @@ var PropertiesView = Backbone.View.extend({
         for (var attr in node.get('properties')) {
             $("<tr><td>"+attr+"</td><td>"+node.get('properties')[attr]+"</td></tr>").appendTo($list);
         }
-        
-        
-        var $select = this.$('#addEdgeSelector');
-        $select.empty();
-        
-        console.log($select);
-        this.model.each(function(node) {
-            $("<option>").attr('value', node.get('id')).html(node.get('id')).appendTo($select);
-        });
-        
+
+        var $ident = this.$('#identifierInfo');
+        $ident.text(node.id);
+                
     },
     
     getActiveNode: function() {
@@ -56,12 +73,8 @@ var PropertiesView = Backbone.View.extend({
     
     addEdge: function() {
         var from = this.getActiveNode();
-        var to = this.model.get({cid: this.$('#addEdgeSelector').val()});
-        
-        var e = from.addEdgeTo(to);
-        
-        edges.add(e);
-        e.save();
+        this.connect = from;
+        this.hide();
     },
     
     saveNode: function() {
