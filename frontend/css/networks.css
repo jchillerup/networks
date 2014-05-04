@@ -6,7 +6,7 @@ body {
 #graphView {
     position: absolute;
     left:0; top: 0; bottom: 0; right: 0;
-    background: rgb(41,38,33);
+    background: rgb(54,37,29);
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -23,7 +23,7 @@ body {
     bottom: 20px;
     width: 265px;
     padding: 20px;
-    background: rgb(56,77,84);
+    background: rgb(122,22,66);
 }
 
 #graphControls {
