@@ -13,6 +13,7 @@ var PropertiesView = Backbone.View.extend({
     },
     
     show: function(which) {
+        //console.log(this.active.graphNode);
 
         this.$el.show();
         this.active =  which;

@@ -43,15 +43,17 @@ var GraphView = Backbone.View.extend({
     makeNiceUp: function() {
         this.sigmaGraph.stopForceAtlas2();
     },
-    
+    nodeidx: 0,
     newNode: function(node, collection, xmlhttp) {
         var graph = this.sigmaGraph;
 
         var flatnode = node.toJSON();
         //flatnode.id = flatnode.identifier;
         
-        flatnode.x = Math.random();
-        flatnode.y = Math.random();
+        var modulo = Math.sqrt( _.size(this.models['nodes']) );
+
+        flatnode.x = (this.nodeidx % modulo) / 4;
+        flatnode.y = (Math.floor( this.nodeidx++ / modulo )) / 4;
         flatnode.size = 10;
         flatnode.label = flatnode.properties.name || flatnode.id;
         flatnode.color = "#FF9D00";
