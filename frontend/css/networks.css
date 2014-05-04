@@ -26,6 +26,18 @@ body {
     background: rgb(122,22,66);
 }
 
+#logo {
+    position: absolute;
+    padding: 10px;
+    z-index: 10000;
+    bottom: 0;
+    left: 10px;
+}
+
+#logo > i {
+    font-size: 50px;
+}
+
 #graphControls {
     position: absolute;
     padding: 10px;

@@ -5,7 +5,6 @@ var GraphView = Backbone.View.extend({
         "mouseup #niceButton": "makeNiceUp",
         "mousedown #niceButton": "makeNiceDown",
         "click #addNodeButton": "addNode",
-        "click #addEdgeButton": "addEdge"
     },
     unimplemented: function() {
         console.error('Unimplemented!');
@@ -80,9 +79,17 @@ var GraphView = Backbone.View.extend({
     }, 50),
     
     addNode: function() {
-        var identifier = prompt("Identifier?");
+
+
+        var name = prompt("Name?");
+
+        if (name === null or name === "") {
+            return;
+        }
+
+        var identifier = name.toLowerCase().replace(" ", "-") + "@manual";
         
-        var node = new Node({id: identifier, properties: {}});
+        var node = new Node({id: identifier, properties: {name: name}});
         
         this.models['nodes'].add(node);
         
@@ -102,7 +109,4 @@ var GraphView = Backbone.View.extend({
         
     },
     
-    addEdge: function() {
-        console.log(this);
-    }
 });
