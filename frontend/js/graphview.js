@@ -83,7 +83,7 @@ var GraphView = Backbone.View.extend({
 
         var name = prompt("Name?");
 
-        if (name === null or name === "") {
+        if (name === null || name === "") {
             return;
         }
 
