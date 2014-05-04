@@ -51,14 +51,24 @@ var GraphView = Backbone.View.extend({
 
         var flatnode = node.toJSON();
         //flatnode.id = flatnode.identifier;
+
+        // HACK HACK HACK
+        var nodeColor =function(str) { 
+            var colors = {
+                facebook: "#3b5998",
+                BiQ: "#34FB77"
+            };
+            return colors[str] || "#FF9D00";
+        }        
         
+
         var modulo = Math.ceil(Math.sqrt( _.size(this.models['nodes']) ));
 
         flatnode.x = (this.nodeidx % modulo) / 4;
         flatnode.y = (Math.floor( this.nodeidx++ / modulo )) / 4;
         flatnode.size = 10;
         flatnode.label = flatnode.properties.name || flatnode.id;
-        flatnode.color = "#FF9D00";
+        flatnode.color = nodeColor(flatnode.id.split("@")[1]); //#FF9D00";
         flatnode.originalcolor = flatnode.color;
         flatnode.cid = node.cid;
         
